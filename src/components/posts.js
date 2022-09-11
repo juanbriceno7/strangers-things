@@ -24,7 +24,7 @@ const Posts = ({posts, setPosts, token}) => {
             }
         }
         fetchPosts();
-    }, [])
+    }, [setPosts, token])
 
     return (
         <div>
@@ -41,13 +41,13 @@ const Posts = ({posts, setPosts, token}) => {
             <section>
             {posts.map(post => {
                 return (
-                    <div key={post._id} className='card m-1'>
+                    <div key={post._id} className='card m-2'>
                         <div className='card-body'>
-                        <h3><Link to={`/posts/${post._id}`}>{post.title}</Link></h3>
-                        <p className="description">{post.description}</p>
-                        <p>Price: <span>{post.price}</span></p>
-                        <p>Seller: <span>{post.author.username}</span></p>
-                        <p>Location: <span>{post.location}</span></p>
+                            <h3><Link to={`/posts/${post._id}`}>{post.title}</Link></h3>
+                            <p className="description">{post.description}</p>
+                            <p>Price: <span>{post.price}</span></p>
+                            <p>Seller: <span>{post.author.username}</span></p>
+                            <p>Location: <span>{post.location}</span></p>
                         </div>
                     </div>
                 )
@@ -56,12 +56,14 @@ const Posts = ({posts, setPosts, token}) => {
             <section>
             {filteredPosts.map(post => {
                 return (
-                    <div key={post._id} className='card'>
-                        <h3><Link to={`/posts/${post._id}`}>{post.title}</Link></h3>
-                        <p className="description">{post.description}</p>
-                        <p>Price: <span>{post.price}</span></p>
-                        <p>Seller: <span>{post.author.username}</span></p>
-                        <p>Location: <span>{post.location}</span></p>
+                    <div key={post._id} className='card m-2'>
+                        <div className='card-body'>
+                            <h3><Link to={`/posts/${post._id}`}>{post.title}</Link></h3>
+                            <p className="description">{post.description}</p>
+                            <p>Price: <span>{post.price}</span></p>
+                            <p>Seller: <span>{post.author.username}</span></p>
+                            <p>Location: <span>{post.location}</span></p>
+                        </div>
                     </div>
                 )
             })}

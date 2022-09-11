@@ -26,7 +26,7 @@ const SinglePost = ({posts, setPosts, setUserInfo, token}) => {
             }
         }
         fetchPosts();
-    }, [isEditmode, messaging])
+    }, [isEditmode, messaging, setPosts, token])
 
     if (!post) {
         return <h1 className='ms-2'>No Posts Found</h1>;

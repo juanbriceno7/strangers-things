@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
 const Search = ({posts, searchValue, setSearchValue, setFilteredPosts}) => {
-    const postMatches = (post) => {
-        const text = (post.title + post.description + post.location + post.author.username).toLowerCase();
-        return text.includes(searchValue.toLowerCase());
-    }
-
+    
     useEffect(() => {
+        const postMatches = (post) => {
+            const text = (post.title + post.description + post.location + post.author.username).toLowerCase();
+            return text.includes(searchValue.toLowerCase());
+        }
         setFilteredPosts(posts.filter(post => postMatches(post)))
-    }, [searchValue])
+    }, [searchValue, posts, setFilteredPosts])
 
     return (
         <div className="m-3">
