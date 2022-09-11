@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login, testLogin } from "../api";
+import { login } from "../api";
 
 const Login = (props) => {
     const [username, setUsername] = useState('');
@@ -14,8 +14,7 @@ const Login = (props) => {
             const response = await login(username, password);
             if (response) {
                 setToken(response);
-                navigate('/posts', { replace: true });
-                // testLogin(response);
+                navigate('/posts');
             }
         }
         catch (err) {
@@ -23,15 +22,23 @@ const Login = (props) => {
         }
     }
     return (
-        <div>
-            <form onSubmit={submitHandler}>
-                <input type='text' name='username' placeholder='Username' onChange={event => setUsername(event.target.value)} required></input>
-                <input type='password' name='password' placeholder='Password' onChange={event => setPassword(event.target.value)} required></input>
-                <button type='submit'>Log In</button>
-            </form>
-            <Link to='/register'>Sign Up</Link>
-            
-        </div>
+        <>
+            <header className="ms-5 mb-3">
+                <h3>Log In</h3>
+            </header>
+            <div className="ms-5">
+                <form onSubmit={submitHandler}>
+                    <div className="mb-3 col-sm-5">
+                        <input type="text" className="form-control" placeholder='Username' onChange={event => setUsername(event.target.value)} required></input>
+                    </div>
+                    <div className="mb-3 col-sm-5">
+                        <input type="password" className="form-control" placeholder='Password' onChange={event => setPassword(event.target.value)} required></input>
+                    </div>
+                    <button type="submit" className="btn btn-primary mb-3">Log In</button>
+                </form>
+                <Link to='/register'>Sign Up</Link>
+            </div>
+        </>
         
     )
 }

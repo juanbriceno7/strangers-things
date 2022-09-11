@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Link, Routes, Route} from 'react-router-dom';
 import { fetchUserInfo } from './api';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   Home,
   Login,
@@ -22,58 +23,51 @@ const App = () => {
     setToken('');
   }
 
-  function isLoggedIn() {
-    if (token !== '') {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-
   function makeHeaders() {
-    if (isLoggedIn()) {
+    if (token !== '') {
       return (
         <>
-          <Link to='/profile'>PROFILE</Link>
-          <Link to='/posts' onClick={logOut}>LOG OUT</Link>
+          <Link to='/profile' className='m-2 text-white'>PROFILE</Link>
+          <Link to='/posts' className='m-2 text-white' onClick={logOut}>LOG OUT</Link>
         </>
       )
     }
     else {
-      return <Link to='/login'>LOG IN</Link>
+      return <Link to='/login' className='m-2 text-white'>LOG IN</Link>
     }
   }
 
   useEffect(() => {
+    async function fetchUserData(token) {
+      const result = await fetchUserInfo(token);
+      setUserInfo(result.data);
+    }
     if (token !== '') {
-      async function fetchUserData(token) {
-        const result = await fetchUserInfo(token);
-        setUserInfo(result.data);
-      }
       fetchUserData(token);
     }
   }, [token])
 
   return (
     <div className="App">
-      <header>
-      <div id="title">
-            <h3>Stranger's Things</h3>
-            <Link to='/posts'>POSTS</Link>
-            {makeHeaders()}
+      <header className='bg-secondary text-white mb-2 pb-1'>
+      <div className='d-flex ms-3 pt-2'>
+        <h3 className='flex-grow-1'>Stranger's Things</h3>
+        <div className='align-self-end'>
+          <Link to='/posts' className='m-2 text-white'>POSTS</Link>
+          {makeHeaders()}
         </div>
+      </div>
+      </header>
+      <main>
         <Routes>
           <Route path='/' element={<Home />}></Route>
           <Route path='/posts' element={<Posts posts={posts} setPosts={setPosts} token={token}/>}></Route>
           <Route path='/login' element={<Login setToken={setToken}/>}></Route>
           <Route path='/register' element={<Register setToken={setToken}/>}></Route>
-          <Route path='/addpost' element={<AddPost token={token} />}></Route>
+          <Route path='/addpost' element={<AddPost token={token} setUserInfo={setUserInfo}/>}></Route>
           <Route path='/profile' element={<Profile userInfo={userInfo}/>}></Route>
-          <Route path='/posts/:postId' element={<SinglePost posts={posts} setPosts={setPosts} token={token}/>}></Route>
+          <Route path='/posts/:postId' element={<SinglePost posts={posts} setPosts={setPosts} setUserInfo={setUserInfo} token={token}/>}></Route>
         </Routes>
-      </header>
-      <main>
         
       </main>
     </div>

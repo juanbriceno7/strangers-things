@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { addMessage } from "../api";
+import { addMessage, fetchUserInfo } from "../api";
 
-const Message = ({postId, token, setMessaging}) => {
+const Message = ({postId, token, setMessaging, setUserInfo}) => {
     const [message, setMessage] = useState("");
 
     const messageSubmit = async (event) => {
@@ -10,15 +9,18 @@ const Message = ({postId, token, setMessaging}) => {
         const result = await addMessage(postId, message, token);
         if (result) {
             setMessaging(false);
-            //navigate(`posts/${postId}`, { replace: true });
+            const refetch = await fetchUserInfo(token);
+            setUserInfo(refetch.data);
             //display success message?
         }
     }
 
     return (
         <form onSubmit={messageSubmit}>
-            <input type='text' id='message' onChange={event => setMessage(event.target.value)}></input>
-            <button type='submit'>SEND</button>
+            <div className="mb-2">
+                <textarea className="form-control w-50" onChange={event => setMessage(event.target.value)}></textarea>
+            </div>
+            <button type='submit' className="btn btn-primary">SEND</button>
         </form>
     )
 }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams} from 'react-router-dom';
-import { deletePost, fetchAllPostsAuthenticated, fetchAllPosts } from '../api';
+import { deletePost, fetchAllPostsAuthenticated, fetchAllPosts, fetchUserInfo } from '../api';
 import { EditPost, Message } from './index'
 
-const SinglePost = ({posts, setPosts, token}) => {
+const SinglePost = ({posts, setPosts, setUserInfo, token}) => {
     const { postId } = useParams();
     const post = posts.find(correctPost => correctPost._id === postId)
     const [isEditmode, setIsEditMode] = useState(false);
@@ -29,51 +29,58 @@ const SinglePost = ({posts, setPosts, token}) => {
     }, [isEditmode, messaging])
 
     if (!post) {
-        return <h1>No Posts Found</h1>;
+        return <h1 className='ms-2'>No Posts Found</h1>;
     }
     else {
         return (
-            <div className='post'>
+            <div className='ms-5'>
                 {isEditmode ? 
                     <EditPost token={token} post={post} setIsEditMode={setIsEditMode} /> :
                     <>
-                    <h3>{post.title}</h3>
+                    <h2>{post.title}</h2>
                     <p className="description">{post.description}</p>
                     <p>Price: <span>{post.price}</span></p>
                     <p>Seller: <span>{post.author.username}</span></p>
                     <p>Location: <span>{post.location}</span></p>
-                    {post.isAuthor && token !== '' ? 
-                    // add options for poster, use returns to display messages
+                    {post.isAuthor && (
                     <>
-                    <button onClick={() => setIsEditMode(true)}>EDIT</button>
-                    <button onClick={() => {
-                        deletePost(post._id, token)
-                        navigate('/posts', { replace: true });
+                    <button className="btn btn-primary me-2" onClick={() => setIsEditMode(true)}>EDIT</button>
+                    <button className="btn btn-danger" onClick={async () => {
+                        const success = await deletePost(post._id, token);
+                        if (success) {
+                            const refetch = await fetchUserInfo(token);
+                            setUserInfo(refetch.data);
+                            navigate('/profile');
+                        }
                         }} >DELETE</button>
-                    </> :
-                    null}
+                    </> 
+                    )}
                     </>
                 }
-                {!post.isAuthor && token !== '' ? 
-                <button onClick={() => setMessaging(true)}>MESSAGE</button> :
-                null}
-                {messaging ? 
-                    <Message postId={post._id} token={token} setMessaging={setMessaging}/> :
-                    null
-                }
-                <br></br>
-                <section>
-                    {post.messages.map(message => {
-                        return(
-                        <>
-                        <div key={message._id}>
-                            <h3>{message.fromUser.username}</h3>
-                            <p>{message.content}</p>
-                        </div>
-                        </>
-                        )
-                    })}
-                </section>
+
+                {!post.isAuthor && (
+                messaging ? 
+                    <Message postId={post._id} token={token} setMessaging={setMessaging} setUserInfo={setUserInfo}/> :
+                    <button className="btn btn-primary" onClick={() => setMessaging(true)}>MESSAGE</button>
+                )}
+                {post.isAuthor && !isEditmode && (
+                <div className="mt-4">
+                    <h3>Messages</h3>
+                    <section className="ms-4">
+                        {post.messages.map(message => {
+                            return(
+                            <div key={message._id}>
+                                <h4>{message.fromUser.username}</h4>
+                                <p>{message.content}</p>
+                            </div>
+                            )
+                        })}
+                        {post.messages.length === 0 && (
+                            <h4>No messages found</h4>
+                        )}
+                    </section>
+                </div>
+                )}
             </div>
         )
     }

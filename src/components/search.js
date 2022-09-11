@@ -11,7 +11,7 @@ const Search = ({posts, searchValue, setSearchValue, setFilteredPosts}) => {
     }, [searchValue])
 
     return (
-        <div>
+        <div className="m-3">
             <input
             type="text"
             className="search"

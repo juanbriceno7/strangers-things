@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom";
 import { editPost } from "../api";
 
 const EditPost = ({token, post, setIsEditMode}) => {
@@ -8,7 +7,6 @@ const EditPost = ({token, post, setIsEditMode}) => {
     const [newPrice, setNewPrice] = useState(post.price)
     const [newLocation, setNewLocation] = useState(post.location)
     const [newWillDeliver, setNewWillDeliver] = useState(post.willDeliver)
-    let navigate = useNavigate();
 
     async function submitHandler(event) {
         event.preventDefault();
@@ -16,7 +14,6 @@ const EditPost = ({token, post, setIsEditMode}) => {
             const response = await editPost(token, post._id, newTitle, newDescription, newPrice, newLocation, newWillDeliver);
             if (response) {
                 setIsEditMode(false);
-                //navigate(`/posts/${post._id}`, { replace: true });
             }
         }
         catch (err) {
@@ -24,22 +21,54 @@ const EditPost = ({token, post, setIsEditMode}) => {
         }
     }
     if (post.isAuthor) {
-    return (
-        
-        <form onSubmit={submitHandler}>
-            <label htmlFor="title">Title </label>
-            <input type="text" name="title" value={newTitle} onChange={event => setNewTitle(event.target.value)} required></input>
-            <label htmlFor="description">Description </label>
-            <input type="text" name="description" value={newDescription} onChange={event => setNewDescription(event.target.value)} required></input>
-            <label htmlFor="price">Price </label>
-            <input type="text" name="price" value={newPrice} onChange={event => setNewPrice(event.target.value)} required></input>
-            <label htmlFor="location">Location </label>
-            <input type="text" name="location" value={newLocation} onChange={event => setNewLocation(event.target.value)}></input>
-            <input type="checkbox" name="deliver" value={newWillDeliver} onChange={event => setNewWillDeliver(event.target.value)}></input>
-            <label htmlFor="deliver">Willing to Deliver?</label>
-            <button type="submit">DONE</button>
-        </form>
-    )
+        return (
+            <div className="ms-5 mb-2">
+                <header>
+                    <h3>Edit Post</h3>
+                </header>
+                <form onSubmit={submitHandler}>
+                    <div className="row mb-2">
+                        <label htmlFor="title" className="col-form-label">Title:</label>
+                        <div className="col-sm-5">
+                            <input type="text" className="form-control" id="title" value={newTitle} onChange={event => setNewTitle(event.target.value)} required></input>
+                        </div>
+                    </div>
+                    <div className="row mb-2">
+                        <label htmlFor="description" className="col-form-label">Description:</label>
+                        <div className="col-sm-5">
+                            <textarea className="form-control" id="description" value={newDescription} onChange={event => setNewDescription(event.target.value)} required></textarea>
+                        </div>
+                    </div>
+                    <div className="row mb-2">
+                        <label htmlFor="price" className="col-form-label">Price:</label>
+                        <div className="col-sm-5">
+                            <input type="text" className="form-control" id="price" value={newPrice} onChange={event => setNewPrice(event.target.value)} required></input>
+                        </div>
+                    </div>
+                    <div className="row mb-4">
+                        <label htmlFor="location" className="col-form-label">Location:</label>
+                        <div className="col-sm-5">
+                            <input type="text" className="form-control" id="location" value={newLocation} onChange={event => setNewLocation(event.target.value)}></input>
+                        </div>
+                    </div>
+                    <div className="form-check mb-3">
+                        {newWillDeliver ? 
+                        <input className="form-check-input" type="checkbox" id="willDeliver" value={newWillDeliver} checked={true}
+                        onChange={event => event.target.value === 'false' ? 
+                        setNewWillDeliver(true) :
+                        setNewWillDeliver(false)}></input>
+                        :
+                        <input className="form-check-input" type="checkbox" id="willDeliver" value={newWillDeliver}
+                        onChange={event => event.target.value === 'false' ? 
+                        setNewWillDeliver(true) :
+                        setNewWillDeliver(false)}></input>
+                        }
+                        <label className="form-check-label" htmlFor="willDeliver">Willing to Deliver?</label>
+                    </div>
+                    <button type="submit" className="btn btn-primary mb-2">Submit</button>
+                </form>
+            </div>
+        )
     }
 }
 

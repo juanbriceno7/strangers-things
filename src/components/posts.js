@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { fetchAllPosts, fetchAllPostsAuthenticated } from '../api';
 import { Search } from './index'
 
 const Posts = ({posts, setPosts, token}) => {
     const [searchValue, setSearchValue] = useState('');
     const [filteredPosts, setFilteredPosts] = useState([]);
+    let navigate = useNavigate();
     
     useEffect(() => {
         async function fetchPosts() {
@@ -23,17 +24,15 @@ const Posts = ({posts, setPosts, token}) => {
             }
         }
         fetchPosts();
-    }, [posts])
+    }, [])
 
     return (
-        <div id='posts'>
-            <header>
-                <h1>Posts</h1>
-                {/* search posts form */}
-                {token !== '' ? 
-                <Link to='/addpost'>Add Post</Link> :
-                null
-                }
+        <div>
+            <header className='m-3 d-flex'>
+                <h1 className='flex-grow-1'>Posts</h1>
+                {token !== '' && (
+                    <button type="button" className="btn btn-primary" onClick={() => navigate('/addpost')}>Add Post</button>
+                )}
             </header>
             <section>
                 <Search posts={posts} searchValue={searchValue} setSearchValue={setSearchValue} setFilteredPosts={setFilteredPosts}/>
@@ -42,12 +41,14 @@ const Posts = ({posts, setPosts, token}) => {
             <section>
             {posts.map(post => {
                 return (
-                    <div key={post._id} className='post'>
+                    <div key={post._id} className='card m-1'>
+                        <div className='card-body'>
                         <h3><Link to={`/posts/${post._id}`}>{post.title}</Link></h3>
                         <p className="description">{post.description}</p>
                         <p>Price: <span>{post.price}</span></p>
                         <p>Seller: <span>{post.author.username}</span></p>
                         <p>Location: <span>{post.location}</span></p>
+                        </div>
                     </div>
                 )
             })}
@@ -55,7 +56,7 @@ const Posts = ({posts, setPosts, token}) => {
             <section>
             {filteredPosts.map(post => {
                 return (
-                    <div key={post._id} className='post'>
+                    <div key={post._id} className='card'>
                         <h3><Link to={`/posts/${post._id}`}>{post.title}</Link></h3>
                         <p className="description">{post.description}</p>
                         <p>Price: <span>{post.price}</span></p>
